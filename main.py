@@ -1,5 +1,7 @@
 from socket import *
 
+IP_addr = "192.168.56.1"
+
 def main():
     IP = None
     if IP == None:
@@ -8,31 +10,33 @@ def main():
         client(IP)
 
 
-def client(IP):
-    pass
+def client(connectionSocket, addr):
+    connectionSocket.send("Hello".encode())
+    while True:
+        try: 
+            message = connectionSocket.recv(1024)
+            if message:
+                print(message)
+        except:
+            continue
+    
 
 def server():
     print("starting server")
     serverSocket =  socket(AF_INET, SOCK_STREAM)
-    serverSocket.bind(('',2907))
+    serverSocket.bind((IP_addr,2907))
     serverSocket.listen(1)
 
-    while True:
+    safety = 0
+    while safety <= 100:
+        safety = safety + 1 
+
         connectionSocket, addr = serverSocket.accept()
         try: 
-            message_rcv = connectionSocket.recv(1024).decode()
-            print(message_rcv)
-
-            message2send = "Hello"
-            message_send = connectionSocket.send(message2send.encode())
-            print(message_send)
-            connectionSocket.close()
-        
+            client(connectionSocket, addr)
         except IOError:
             connectionSocket.send("server unreachable".encode())
 
-
-    return IP
 
 if __name__ == "__main__":
     main()
