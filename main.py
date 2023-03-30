@@ -31,6 +31,7 @@ class Chat:
                     print("Closing connection socket.")
                     self.GlobalFlag = True
                     connectionSocket.close()
+                    raise OSError("Goodbye")
                     return
                 elif message:
                     print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
@@ -51,6 +52,7 @@ class Chat:
                     self.User2Socket.close()
                     self.GlobalFlag = True
                     print("Connection Closed")
+                    raise OSError("Goodbye")
                     return
         except:
             print("User has left.")
