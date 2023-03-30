@@ -4,6 +4,7 @@ import datetime
 
 Port = 2909
 User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
+print("Your IP address is: ", User1_IP_addr)
 User2Socket = socket(AF_INET, SOCK_STREAM)
 User1Socket = socket(AF_INET, SOCK_STREAM)
 username = "Alex"
@@ -25,7 +26,7 @@ def receiving():
                 connectionSocket.close()
                 exit()
             elif message:
-                print("\n" + username + " >", message.decode())
+                print(username + " >\n", message.decode())
         except error:
             print("Error receiving message:", error)
 
@@ -38,7 +39,7 @@ def sending():
     # Send message
     while True:
         message = input("> ")
-        User2Socket.send((str(datetime.datetime.now()) + message).encode())
+        User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
             exit()
