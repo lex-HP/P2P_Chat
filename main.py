@@ -22,6 +22,8 @@ class Chat:
 
         # Start receiving messages
         while not self.GlobalFlag:
+            if self.GlobalFlag:
+                break
             try:
                 message = connectionSocket.recv(1024)
                 received = message.decode()
@@ -31,32 +33,27 @@ class Chat:
                     print("Closing connection socket.")
                     self.GlobalFlag = True
                     connectionSocket.close()
-                    raise OSError("Connection closed")
-                    #break
+                    break
                 elif message:
                     print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
             except error:
                 print("User has left")
                 connectionSocket.close()
                 self.GlobalFlag = True
-                exit()
                 break 
 
     def sending(self):
         self.User2Socket.connect((self.User2_IP_addr, self.Port))
-        # Send message
-        try: 
-            while not self.GlobalFlag:
-                message = input("> ")
-                self.User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + self.username + "#<>}" + message).encode())
-                if (message == "Goodbye"):
-                    self.User2Socket.close()
-                    self.GlobalFlag = True
-                    print("Connection Closed")
-                    raise OSError("Connection Closed")
-        except:
-            print("User has left.")
-            exit()
+        # Send message 
+        while not self.GlobalFlag:
+            message = input("> ")
+            self.User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + self.username + "#<>}" + message).encode())
+            if (message == "Goodbye"):
+                self.User2Socket.close()
+                self.GlobalFlag = True
+                print("Connection Closed")
+        print("User has left.")
+        exit()
                 
 
     def start_chat(self):
