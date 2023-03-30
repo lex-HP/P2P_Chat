@@ -65,7 +65,11 @@ class Chat:
 
         rcv.join()
         send.join()
+        exit()
         
 if __name__ == "__main__":
     chat = Chat()
-    chat.start_chat()
+    try: 
+        chat.start_chat()
+    except: 
+        exit()
