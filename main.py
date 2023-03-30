@@ -26,20 +26,19 @@ def receiving():
                 connectionSocket.close()
                 exit()
             elif message:
-                print(username + " >\n", message.decode())
+                received = message.decode()
+                time_received, content_received = received.split("$#<>}")
+                print("[" + time_received + "]" + username + "> " + content_received)
         except error:
             print("Error receiving message:", error)
 
 
 def sending():
-    #User2_IP_addr = gethostbyname(gethostname())
-
     User2Socket.connect((User2_IP_addr, Port))
-
     # Send message
     while True:
         message = input("> ")
-        User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + message).encode())
+        User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "$#<>}" + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
             exit()
