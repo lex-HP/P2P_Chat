@@ -3,7 +3,7 @@ import threading
 import datetime
 
 Port = 2909
-User1_IP_addr = "192.168.8.239"
+User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
 User2Socket = socket(AF_INET, SOCK_STREAM)
 User1Socket = socket(AF_INET, SOCK_STREAM)
 username = "Alex"
