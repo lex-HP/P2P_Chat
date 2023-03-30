@@ -1,43 +1,33 @@
 from socket import *
 
-IP_addr = "10.239.229.103"
+User1_Port = 2907
+User2_Port = 2908
+User1_IP_addr = gethostbyname(gethostname())
+User2Socket = socket(AF_INET, SOCK_STREAM)
+User1Socket = socket(AF_INET, SOCK_STREAM)
 
 def main():
-    IP = None
-    if IP == None:
-        IP=server()
-    else:
-        client(IP)
+    User1Socket.bind((User1_IP_addr, User1_Port))
+    User1Socket.listen(1)
 
+    print("Waiting for connection...")
+    connectionSocket, addr = User1Socket.accept()
+    print("Connected to", addr)
 
-def client(connectionSocket, addr):
-    #connectionSocket.send("Hello".encode())
+# Start receiving messages
     while True:
-        try: 
+        try:
             message = connectionSocket.recv(1024)
             if message:
-                print(message.decode())
-        except:
-            continue
-    
+                print("Received message:", message.decode())
+        except error:
+            print("Error receiving message:", error)
 
-def server():
-    print("starting server")
-    serverSocket =  socket(AF_INET, SOCK_STREAM)
-    serverSocket.bind((IP_addr,2907))
-    serverSocket.listen(1)
 
-    safety = 0
-    while True: 
-        safety = safety + 1
-        if safety >= 100:
-            break
+def sending():
+    User2_IP_addr = input("Enter IP address of User2: ")
+    User2_IP_addr = gethostbyname(gethostname())
 
-        connectionSocket, addr = serverSocket.accept()
-        try: 
-            client(connectionSocket, addr)
-        except IOError:
-            connectionSocket.send("server unreachable".encode())
 
 
 if __name__ == "__main__":
