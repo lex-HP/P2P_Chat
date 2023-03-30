@@ -31,7 +31,8 @@ class Chat:
                     print("Closing connection socket.")
                     self.GlobalFlag = True
                     connectionSocket.close()
-                    break
+                    raise OSError("Connection closed")
+                    #break
                 elif message:
                     print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
             except error:
@@ -50,8 +51,8 @@ class Chat:
                 self.User2Socket.close()
                 self.GlobalFlag = True
                 print("Connection Closed")
-                break
-
+                raise OSError("Connection Closed")
+                
     def start_chat(self):
         self.User2_IP_addr = input("Enter IP address of User2: ")
         rcv = threading.Thread(target=self.receiving, name="rcv")
