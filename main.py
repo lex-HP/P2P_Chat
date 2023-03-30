@@ -21,16 +21,18 @@ def receiving():
     while True:
         try:
             message = connectionSocket.recv(1024)
-            if message.decode() == "Goodbye":
+            received = message.decode()
+            time_received, username_received ,content_received = received.split("#<>}")
+                
+            if content_received() == "Goodbye":
                 print("Closing connection socket.")
                 connectionSocket.close()
                 exit()
             elif message:
-                received = message.decode()
-                time_received, username_received ,content_received = received.split("#<>}")
                 print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
         except error:
             print("Connection Closed")
+            connectionSocket.close()
             exit()
 
 
