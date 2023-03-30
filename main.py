@@ -1,6 +1,6 @@
+from socket import *
 import threading
 import datetime
-from socket import *
 
 Port = 2909
 User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
@@ -8,9 +8,6 @@ print("Your IP address is: ", User1_IP_addr)
 User2Socket = socket(AF_INET, SOCK_STREAM)
 User1Socket = socket(AF_INET, SOCK_STREAM)
 username = "Alex"
-global terminate_sending
-terminate_sending = False
-# Flag to indicate when the sending thread should terminate
 
 def receiving():
     User1Socket.bind((User1_IP_addr, Port))
@@ -20,8 +17,8 @@ def receiving():
     connectionSocket, addr = User1Socket.accept()
     print("Connected to", addr, "\n>")
 
-    # Start receiving messages
-    while not terminate_sending:
+# Start receiving messages
+    while True:
         try:
             message = connectionSocket.recv(1024)
             received = message.decode()
@@ -30,32 +27,30 @@ def receiving():
             if content_received == "Goodbye":
                 print("Closing connection socket.")
                 connectionSocket.close()
-                # Set flag to terminate sending thread
-                terminate_sending = True
-                break
+                exit()
             elif message:
                 print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
         except error:
             print("User has left")
             connectionSocket.close()
-            # Set flag to terminate sending thread
-            terminate_sending = True
-            break
+            exit()
 
 
 def sending():
-    global terminate_sending
     User2Socket.connect((User2_IP_addr, Port))
     # Send message
-    while not terminate_sending:
+    while True:
         message = input("> ")
         User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
             print("Connection Closed")
-            # Set flag to terminate sending thread
-            terminate_sending = True
-            break
+            exit()
+    
+
+
+
+
 
 if __name__ == "__main__":
     #User2_IP_addr = input("Enter IP address of User2: ")
@@ -64,6 +59,7 @@ if __name__ == "__main__":
     send = threading.Thread(target=sending, name="send")
     rcv.start()
     send.start()
-    # Wait for both threads to terminate
+
     rcv.join()
     send.join()
+
