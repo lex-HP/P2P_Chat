@@ -68,5 +68,9 @@ class Chat:
         send.join()
         
 if __name__ == "__main__":
-    chat = Chat()
-    chat.start_chat()
+    try:
+        chat = Chat()
+        chat.start_chat()
+    except:
+        print("ok goodbye")
+        exit()
