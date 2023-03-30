@@ -31,16 +31,14 @@ class Chat:
                     print("Closing connection socket.")
                     self.GlobalFlag = True
                     connectionSocket.close()
-                    raise OSError("Connection closed")
-                    #break
+                    return
                 elif message:
                     print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
             except error:
                 print("User has left")
                 connectionSocket.close()
                 self.GlobalFlag = True
-                exit()
-                break 
+                return
 
     def sending(self):
         self.User2Socket.connect((self.User2_IP_addr, self.Port))
@@ -53,10 +51,10 @@ class Chat:
                     self.User2Socket.close()
                     self.GlobalFlag = True
                     print("Connection Closed")
-                    raise OSError("Connection Closed")
+                    return
         except:
             print("User has left.")
-            exit()
+            return
                 
 
     def start_chat(self):
