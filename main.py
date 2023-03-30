@@ -3,7 +3,7 @@ import threading
 import datetime
 
 Port = 2909
-User1_IP_addr = "10.239.135.240"
+User1_IP_addr = gethostbyname(gethostname())
 User2Socket = socket(AF_INET, SOCK_STREAM)
 User1Socket = socket(AF_INET, SOCK_STREAM)
 
@@ -37,7 +37,7 @@ def sending():
     # Send message
     while True:
         message = input("Enter message to send: ")
-        User2Socket.send(datetime.datetime.now() + message.encode())
+        User2Socket.send(str(datetime.datetime.now()) + message.encode())
         if (message == "Goodbye"):
             User2Socket.close()
             exit()
