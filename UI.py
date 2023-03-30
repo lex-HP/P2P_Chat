@@ -8,6 +8,12 @@ class ChatGUI:
         self.window = Tk()
         self.window.title("Chat Program")
         self.create_widgets()
+
+    def bSubmit(self):
+        print(self.user2_ip_input.get())
+        self.chat.start_chat(str(self.user2_ip_input.get()))
+        pass
+
     
     def create_widgets(self):
         # Create labels
@@ -19,9 +25,13 @@ class ChatGUI:
         self.user2_ip_input = Entry(self.window, width=20)
         self.user2_ip_input.grid(row=0, column=1, padx=5, pady=5)
 
-        # Create chat log
+        # Create chat log 
         self.chat_log = Text(self.window, width=50, height=10, state=DISABLED)
         self.chat_log.grid(row=3, column=0, columnspan=2, padx=5, pady=5)
+
+        ip_addr = self.user2_ip_input.get()
+        self.ip_submit = Button(self.window,text="Submit IP", command=self.bSubmit)
+        self.ip_submit.grid(row=1, column=1)
 
         # Create send message field and button
         self.send_message_input = Entry(self.window, width=40)

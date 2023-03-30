@@ -11,6 +11,7 @@ class Chat:
         self.User1Socket = socket(AF_INET, SOCK_STREAM)
         self.username = "Alex"
         self.GlobalFlag = False
+        # self.User2_IP_addr = ""
 
     def receiving(self):
         self.User1Socket.bind((self.User1_IP_addr, self.Port))
@@ -59,8 +60,9 @@ class Chat:
             return
                 
 
-    def start_chat(self):
-        self.User2_IP_addr = input("Enter IP address of User2: ")
+    def start_chat(self, User2_IP_addr):
+        self.User2_IP_addr = User2_IP_addr
+        #self.User2_IP_addr = input("Enter IP address of User2: ")
         rcv = threading.Thread(target=self.receiving, name="rcv")
         send = threading.Thread(target=self.sending, name="send")
         rcv.start()
