@@ -8,9 +8,9 @@ print("Your IP address is: ", User1_IP_addr)
 User2Socket = socket(AF_INET, SOCK_STREAM)
 User1Socket = socket(AF_INET, SOCK_STREAM)
 username = "Alex"
-
-# Flag to indicate when the sending thread should terminate
+global terminate_sending
 terminate_sending = False
+# Flag to indicate when the sending thread should terminate
 
 def receiving():
     User1Socket.bind((User1_IP_addr, Port))
@@ -31,7 +31,6 @@ def receiving():
                 print("Closing connection socket.")
                 connectionSocket.close()
                 # Set flag to terminate sending thread
-                global terminate_sending
                 terminate_sending = True
                 break
             elif message:
