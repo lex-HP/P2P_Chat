@@ -6,7 +6,7 @@ All clients connect to a SQL database.
 All chats are locally stored.
 
 ## TODO
-- 
-- User can only send one message before code ends
-- Check between two computers
-- Add database
+- Add colors between sender and receiver
+- fix IP submit tkinter issue
+- Add offline queue
+- Add database (pandaos) 
