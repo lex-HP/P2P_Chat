@@ -37,7 +37,7 @@ def sending():
     # Send message
     while True:
         message = input("Enter message to send: ")
-        User2Socket.send(str(datetime.datetime.now()) + message.encode())
+        User2Socket.send((str(datetime.datetime.now()) + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
             exit()
