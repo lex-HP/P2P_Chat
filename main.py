@@ -15,7 +15,7 @@ def receiving():
 
     print("Waiting for connection...")
     connectionSocket, addr = User1Socket.accept()
-    print("Connected to\n>", addr)
+    print("Connected to", addr, "\n>")
 
 # Start receiving messages
     while True:
@@ -28,7 +28,7 @@ def receiving():
             elif message:
                 received = message.decode()
                 time_received, username_received ,content_received = received.split("#<>}")
-                print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
+                print("[" + time_received + "] " + username_received + " > " + content_received)
         except error:
             print("Error receiving message:", error)
 
@@ -37,6 +37,7 @@ def sending():
     User2Socket.connect((User2_IP_addr, Port))
     # Send message
     while True:
+        print(">", end="")
         message = input()
         User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
         if (message == "Goodbye"):
