@@ -24,14 +24,14 @@ def receiving():
             received = message.decode()
             time_received, username_received ,content_received = received.split("#<>}")
                 
-            if content_received() == "Goodbye":
+            if content_received == "Goodbye":
                 print("Closing connection socket.")
                 connectionSocket.close()
                 exit()
             elif message:
                 print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
         except error:
-            print("Connection Closed")
+            print("User has left")
             connectionSocket.close()
             exit()
 
@@ -44,7 +44,9 @@ def sending():
         User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
-            exit()
+            print("Connection Closed")
+            break
+    exit()
 
 
 
@@ -52,6 +54,7 @@ def sending():
 
 if __name__ == "__main__":
     User2_IP_addr = input("Enter IP address of User2: ")
+    User2_IP_addr = "192.168.8.239"
     threading.Thread(target=receiving).start()
     threading.Thread(target=sending).start()
 
