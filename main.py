@@ -1,6 +1,6 @@
 from socket import *
 
-IP_addr = "192.168.56.1"
+IP_addr = "10.239.229.103"
 
 def main():
     IP = None
@@ -11,12 +11,12 @@ def main():
 
 
 def client(connectionSocket, addr):
-    connectionSocket.send("Hello".encode())
+    #connectionSocket.send("Hello".encode())
     while True:
         try: 
             message = connectionSocket.recv(1024)
             if message:
-                print(message)
+                print(message.decode())
         except:
             continue
     
@@ -28,8 +28,10 @@ def server():
     serverSocket.listen(1)
 
     safety = 0
-    while safety <= 100:
-        safety = safety + 1 
+    while True: 
+        safety = safety + 1
+        if safety >= 100:
+            break
 
         connectionSocket, addr = serverSocket.accept()
         try: 
