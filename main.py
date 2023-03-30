@@ -27,7 +27,7 @@ def receiving():
                 exit()
             elif message:
                 received = message.decode()
-                time_received, content_received = received.split("$#<>}")
+                time_received, content_received = received.split("#<>}")
                 print("[" + time_received + "]" + username + "> " + content_received)
         except error:
             print("Error receiving message:", error)
@@ -38,7 +38,7 @@ def sending():
     # Send message
     while True:
         message = input("> ")
-        User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "$#<>}" + message).encode())
+        User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
             exit()
