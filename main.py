@@ -1,4 +1,5 @@
 from socket import *
+import threading
 
 Port = 2909
 User1_IP_addr = gethostbyname(gethostname())
@@ -28,8 +29,7 @@ def receiving():
 
 
 def sending():
-    #User2_IP_addr = input("Enter IP address of User2: ")
-    User2_IP_addr = gethostbyname(gethostname())
+    #User2_IP_addr = gethostbyname(gethostname())
 
     User2Socket.connect((User2_IP_addr, Port))
 
@@ -44,8 +44,14 @@ def sending():
 
 
 
+
 if __name__ == "__main__":
-    # Prompt user to send or receive messages
+    User2_IP_addr = input("Enter IP address of User2: ")
+    threading.Thread(target=receiving).start()
+    threading.Thread(target=sending).start()
+
+
+    """
     choice = input("Enter 'send' or 'receive': ")
     if choice == "send":
         sending()
@@ -53,3 +59,4 @@ if __name__ == "__main__":
         receiving()
     else:
         print("Invalid choice")
+    """
