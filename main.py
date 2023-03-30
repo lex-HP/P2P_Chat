@@ -10,6 +10,7 @@ class Chat:
         self.User2Socket = socket(AF_INET, SOCK_STREAM)
         self.User1Socket = socket(AF_INET, SOCK_STREAM)
         self.username = "Alex"
+        self.GlobalFlag = False
 
     def receiving(self):
         self.User1Socket.bind((self.User1_IP_addr, self.Port))
@@ -20,7 +21,7 @@ class Chat:
         print("Connected to", addr, "\n>")
 
         # Start receiving messages
-        while True:
+        while not self.GlobalFlag:
             try:
                 message = connectionSocket.recv(1024)
                 received = message.decode()
@@ -28,25 +29,28 @@ class Chat:
 
                 if content_received == "Goodbye":
                     print("Closing connection socket.")
+                    self.GlobalFlag = True
                     connectionSocket.close()
-                    exit()
+                    break
                 elif message:
                     print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
             except error:
                 print("User has left")
                 connectionSocket.close()
-                exit()
+                self.GlobalFlag = True
+                break 
 
     def sending(self):
         self.User2Socket.connect((self.User2_IP_addr, self.Port))
         # Send message
-        while True:
+        while not self.GlobalFlag:
             message = input("> ")
             self.User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + self.username + "#<>}" + message).encode())
             if (message == "Goodbye"):
                 self.User2Socket.close()
+                self.GlobalFlag = True
                 print("Connection Closed")
-                exit()
+                break
 
     def start_chat(self):
         self.User2_IP_addr = input("Enter IP address of User2: ")
