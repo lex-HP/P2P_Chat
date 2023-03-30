@@ -53,11 +53,18 @@ def sending():
 
 
 if __name__ == "__main__":
-    User2_IP_addr = input("Enter IP address of User2: ")
-    User2_IP_addr = "192.168.8.239"
-    threading.Thread(target=receiving).start()
-    threading.Thread(target=sending).start()
+    #User2_IP_addr = input("Enter IP address of User2: ")
+    User2_IP_addr = "192.168.8.188"
+    rcv = threading.Thread(target=receiving, name="rcv").start()
+    send = threading.Thread(target=sending, name="send").start()
 
+ #   threading.Thread.join(rcv)
+  #  threading.Thread.join(send)
+    while True:
+        if (rcv.is_alive() == 0):
+            exit()
+        elif (send.is_alive() == 0):
+            exit()
 
     """
     choice = input("Enter 'send' or 'receive': ")
