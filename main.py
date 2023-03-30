@@ -1,4 +1,3 @@
-#cd ..\..\Users\acmhp\Desktop\EC530\Assignment\P2P_Chat\
 from socket import *
 
 Port = 2909
@@ -18,7 +17,11 @@ def receiving():
     while True:
         try:
             message = connectionSocket.recv(1024)
-            if message:
+            if message.decode() == "Goodbye":
+                print("Closing connection socket.")
+                connectionSocket.close()
+                exit()
+            elif message:
                 print("Received message:", message.decode())
         except error:
             print("Error receiving message:", error)
@@ -31,8 +34,14 @@ def sending():
     User2Socket.connect((User2_IP_addr, Port))
 
     # Send message
-    message = input("Enter message to send: ")
-    User2Socket.send(message.encode())
+    while True:
+        message = input("Enter message to send: ")
+        User2Socket.send(message.encode())
+        if (message == "Goodbye"):
+            User2Socket.close()
+            exit()
+
+
 
 
 if __name__ == "__main__":
