@@ -1,4 +1,5 @@
 from tkinter import *
+from socket import *
 from threading import Thread
 from main import Chat
 
@@ -10,15 +11,15 @@ class ChatGUI:
         self.create_widgets()
 
     def bSubmit(self):
-        print(self.user2_ip_input.get())
-        self.chat.start_chat(str(self.user2_ip_input.get()))
-        pass
+        ip_addr = str(self.user2_ip_input.get())
+        Thread(target=self.chat.start_chat, args=(ip_addr,)).start()
+
 
     
     def create_widgets(self):
         # Create labels
         Label(self.window, text="Enter IP address of User2:").grid(row=0, column=0, sticky=W)
-        Label(self.window, text="Your IP address is: " + self.chat.User1_IP_addr).grid(row=1, column=0, sticky=W)
+        Label(self.window, text="Your IP address is: " + gethostbyname_ex(gethostname())[2][-1]).grid(row=1, column=0, sticky=W)
         Label(self.window, text="Chat Log:").grid(row=2, column=0, sticky=W)
 
         # Create input fields
@@ -49,19 +50,23 @@ class ChatGUI:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
-            Thread(target=self.chat.sending).start()
+            Thread(target=self.chat.sending(self.send_message_input.get())).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
-            Thread(target=self.chat.sending).start()
+            print(self.send_message_input.get())
+            Thread(target=self.chat.sending(self.send_message_input.get())).start()
 
     def update_chat_log(self, message):
         self.chat_log.config(state=NORMAL)
         self.chat_log.insert(END, message + "\n")
         self.chat_log.config(state=DISABLED)
 
+    
+
 gui = ChatGUI()
-Thread(target=gui.chat.receiving).start()
+Thread(target=gui.chat.start_chat).start()
+
 gui.start()
