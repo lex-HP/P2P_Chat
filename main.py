@@ -2,12 +2,23 @@ from socket import *
 import threading
 import datetime
 
-Port = 2910
-User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
-print("Your IP address is: ", User1_IP_addr)
-User2Socket = socket(AF_INET, SOCK_STREAM)
-User1Socket = socket(AF_INET, SOCK_STREAM)
-username = "Alex"
+def startChat():
+    global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, User2Socket, rcv, send
+    Port = 2910
+    User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
+    print("Your IP address is: ", User1_IP_addr)
+    User2Socket = socket(AF_INET, SOCK_STREAM)
+    User1Socket = socket(AF_INET, SOCK_STREAM)
+    username = "Alex"
+    User2_IP_addr = input("Enter IP address of User2: ")
+    #User2_IP_addr = "192.168.8.239"
+    rcv = threading.Thread(target=receiving, name="rcv")
+    send = threading.Thread(target=sending, name="send")
+    rcv.start()
+    send.start()
+
+    rcv.join()
+    send.join()
 
 def receiving():
     User1Socket.bind((User1_IP_addr, Port))
@@ -53,12 +64,4 @@ def sending():
 
 
 if __name__ == "__main__":
-    #User2_IP_addr = input("Enter IP address of User2: ")
-    User2_IP_addr = "192.168.8.239"
-    rcv = threading.Thread(target=receiving, name="rcv")
-    send = threading.Thread(target=sending, name="send")
-    rcv.start()
-    send.start()
-
-    rcv.join()
-    send.join()
+    startChat()
