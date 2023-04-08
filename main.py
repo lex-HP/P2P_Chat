@@ -3,7 +3,7 @@ import threading
 import datetime
 import time
 
-
+message = "<><><><><><><><>"
 flagSetUser2 = 0
 
 def startChat(ip):
@@ -17,7 +17,7 @@ def startChat(ip):
     #User2_IP_addr = input("Enter IP address of User2: ")
     #User2_IP_addr = "192.168.8.239"
     rcv = threading.Thread(target=receiving, name="rcv")
-    send = threading.Thread(target=sending, name="send", args=("<><><><><><><><>5<>", ))
+    send = threading.Thread(target=sending, name="send", args=(message, ))
     
     rcv.start()
     time.sleep(1)
@@ -39,9 +39,9 @@ def receiving():
         try:
             
             print("message = connectionSocket.recv(1024)")
-            message = connectionSocket.recv(1024)
+            rcv_message = connectionSocket.recv(1024)
             print("received = message.decode()")
-            received = message.decode()
+            received = rcv_message.decode()
             print(" time_received, username_received ,content_received = received.")
             time_received, username_received ,content_received = received.split("#<>}")
             
@@ -50,7 +50,7 @@ def receiving():
                 print("Closing connection socket.")
                 connectionSocket.close()
                 exit()
-            elif message:
+            elif rcv_message:
                 print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
         except error:
             print("User has left")
@@ -63,14 +63,7 @@ def sending(message):
     #if User2Socket is None:
     flag = flagSetUser2
     print("message to be sent", message)
-    if flagSetUser2 == 0:
-        print("creating user2 socket")
-        User2Socket = socket(AF_INET, SOCK_STREAM)
-        User2Socket.connect((User2_IP_addr, Port))
-        flag = 1
-    oldMessage = ""
     while True:
-
         if message != oldMessage:
             oldMessage = message
             #message = input("> ")
@@ -80,6 +73,11 @@ def sending(message):
                     User2Socket.close()
                     print("Connection Closed")
                     exit()
+            elif message == "<><><><><><><><>5<>":
+                print("creating user2 socket")
+                global User2Socket
+                User2Socket = socket(AF_INET, SOCK_STREAM)
+                User2Socket.connect((User2_IP_addr, Port))
         else:
             time.sleep(0.3)
         
