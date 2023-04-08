@@ -4,21 +4,16 @@ import datetime
 
 class Chat:
     def __init__(self):
-       # self.User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
-       # self.User1_IP_addr = ""
-        #print("Your IP address is: ", self.User1_IP_addr)
+        self.Port = 2909
+        self.User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
+        print("Your IP address is: ", self.User1_IP_addr)
         self.User2Socket = socket(AF_INET, SOCK_STREAM)
         self.User1Socket = socket(AF_INET, SOCK_STREAM)
         self.username = "Alex"
         self.GlobalFlag = False
-        # self.User2_IP_addr = ""
 
     def receiving(self):
-        try:
-            self.User1Socket.bind((self.User1_IP_addr, self.Port))
-        except:
-            pass
-
+        self.User1Socket.bind((self.User1_IP_addr, self.Port))
         self.User1Socket.listen(1)
 
         print("Waiting for connection...")
@@ -27,38 +22,31 @@ class Chat:
 
         # Start receiving messages
         while not self.GlobalFlag:
-        #while True:
             try:
                 message = connectionSocket.recv(1024)
-                content_received = message.decode()
+                received = message.decode()
+                time_received, username_received ,content_received = received.split("#<>}")
 
-                print("received: " + content_received)
-                
                 if content_received == "Goodbye":
                     print("Closing connection socket.")
                     self.GlobalFlag = True
                     connectionSocket.close()
                     raise OSError("Goodbye")
+                    return
+                elif message:
+                    print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
             except error:
                 print("User has left")
                 connectionSocket.close()
                 self.GlobalFlag = True
                 return
-        
 
-
-    def sending(self, message=None):
-        try:
-            self.User2Socket.connect((self.User2_IP_addr, self.Port))
-        except:
-            pass
-        
-        if message != None:
-            print(message)
+    def sending(self):
+        self.User2Socket.connect((self.User2_IP_addr, self.Port))
         # Send message
         try: 
             while not self.GlobalFlag:
-                #message = input("> ")
+                message = input("> ")
                 self.User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + self.username + "#<>}" + message).encode())
                 if (message == "Goodbye"):
                     self.User2Socket.close()
@@ -67,19 +55,12 @@ class Chat:
                     raise OSError("Goodbye")
                     return
         except:
-            #print("User has left.")
-            pass
+            print("User has left.")
             return
-        
-        return
                 
 
-    def start_chat(self, User2_IP_addr=None):
-        self.User2_IP_addr = User2_IP_addr
-
-        self.User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
-        self.Port = 2909
-
+    def start_chat(self):
+        self.User2_IP_addr = input("Enter IP address of User2: ")
         rcv = threading.Thread(target=self.receiving, name="rcv")
         send = threading.Thread(target=self.sending, name="send")
         rcv.start()
@@ -87,3 +68,11 @@ class Chat:
 
         rcv.join()
         send.join()
+        
+if __name__ == "__main__":
+    try:
+        chat = Chat()
+        chat.start_chat()
+    except:
+        print("ok goodbye")
+        exit()
