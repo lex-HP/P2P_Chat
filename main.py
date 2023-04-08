@@ -2,15 +2,16 @@ from socket import *
 import threading
 import datetime
 
-def startChat():
+def startChat(ip):
     global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, User2Socket, rcv, send
+    User2_IP_addr = ip
     Port = 2910
     User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
     print("Your IP address is: ", User1_IP_addr)
     User2Socket = socket(AF_INET, SOCK_STREAM)
     User1Socket = socket(AF_INET, SOCK_STREAM)
     username = "Alex"
-    User2_IP_addr = input("Enter IP address of User2: ")
+    #User2_IP_addr = input("Enter IP address of User2: ")
     #User2_IP_addr = "192.168.8.239"
     rcv = threading.Thread(target=receiving, name="rcv")
     send = threading.Thread(target=sending, name="send")
@@ -58,9 +59,6 @@ def sending():
             print("Connection Closed")
             exit()
     
-
-
-
 
 
 if __name__ == "__main__":
