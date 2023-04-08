@@ -1,18 +1,17 @@
 from tkinter import *
 from socket import *
 from threading import Thread
-from main import Chat
+from main import startChat
 
 class ChatGUI:
     def __init__(self):
-        self.chat = Chat()
         self.window = Tk()
         self.window.title("Chat Program")
         self.create_widgets()
 
     def bSubmit(self):
         ip_addr = str(self.user2_ip_input.get())
-        Thread(target=self.chat.start_chat, args=(ip_addr,)).start()
+        Thread(target=startChat, args=(ip_addr)).start()
     
     def create_widgets(self):
         # Create labels
