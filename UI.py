@@ -13,8 +13,6 @@ class ChatGUI:
     def bSubmit(self):
         ip_addr = str(self.user2_ip_input.get())
         Thread(target=self.chat.start_chat, args=(ip_addr,)).start()
-
-
     
     def create_widgets(self):
         # Create labels
@@ -50,14 +48,14 @@ class ChatGUI:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
-            Thread(target=self.chat.sending(self.send_message_input.get())).start()
+            #Thread(target=self.chat.sending(self.send_message_input.get())).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
-            print(self.send_message_input.get())
-            Thread(target=self.chat.sending(self.send_message_input.get())).start()
+            print(message)
+            #Thread(target=self.chat.sending(self.send_message_input.get())).start()
 
     def update_chat_log(self, message):
         self.chat_log.config(state=NORMAL)
@@ -67,6 +65,6 @@ class ChatGUI:
     
 
 gui = ChatGUI()
-Thread(target=gui.chat.start_chat).start()
+#Thread(target=gui.chat.start_chat).start()
 
 gui.start()

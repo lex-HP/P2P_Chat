@@ -5,7 +5,7 @@ import datetime
 class Chat:
     def __init__(self):
        # self.User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
-        self.User1_IP_addr = ""
+       # self.User1_IP_addr = ""
         #print("Your IP address is: ", self.User1_IP_addr)
         self.User2Socket = socket(AF_INET, SOCK_STREAM)
         self.User1Socket = socket(AF_INET, SOCK_STREAM)
@@ -14,7 +14,11 @@ class Chat:
         # self.User2_IP_addr = ""
 
     def receiving(self):
-        self.User1Socket.bind((self.User1_IP_addr, self.Port))
+        try:
+            self.User1Socket.bind((self.User1_IP_addr, self.Port))
+        except:
+            pass
+
         self.User1Socket.listen(1)
 
         print("Waiting for connection...")
@@ -23,26 +27,25 @@ class Chat:
 
         # Start receiving messages
         while not self.GlobalFlag:
+        #while True:
             try:
                 message = connectionSocket.recv(1024)
                 content_received = message.decode()
-                
-             #   time_received, username_received ,content_received = received.split("#<>}")
 
+                print("received: " + content_received)
+                
                 if content_received == "Goodbye":
                     print("Closing connection socket.")
                     self.GlobalFlag = True
                     connectionSocket.close()
                     raise OSError("Goodbye")
-                    return
-                #elif message:
-                    #print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
-            
             except error:
                 print("User has left")
                 connectionSocket.close()
                 self.GlobalFlag = True
                 return
+        
+
 
     def sending(self, message=None):
         try:
@@ -50,7 +53,8 @@ class Chat:
         except:
             pass
         
-        print(message)
+        if message != None:
+            print(message)
         # Send message
         try: 
             while not self.GlobalFlag:
@@ -70,26 +74,16 @@ class Chat:
         return
                 
 
-    def start_chat(self, User2_IP_addr):
+    def start_chat(self, User2_IP_addr=None):
         self.User2_IP_addr = User2_IP_addr
+
         self.User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
-        #self.User2_IP_addr = input("Enter IP address of User2: ")
         self.Port = 2909
-        self.User2Socket = socket(AF_INET, SOCK_STREAM)
-        self.User1Socket = socket(AF_INET, SOCK_STREAM)
 
-        #rcv = threading.Thread(target=self.receiving, name="rcv")
-        #send = threading.Thread(target=self.sending, name="send")
-        #rcv.start()
-        #send.start()
+        rcv = threading.Thread(target=self.receiving, name="rcv")
+        send = threading.Thread(target=self.sending, name="send")
+        rcv.start()
+        send.start()
 
-        #rcv.join()
-        #send.join()
-        
-# if __name__ == "__main__":
-#     try:
-#         chat = Chat()
-#         chat.start_chat()
-#     except:
-#         print("ok goodbye")
-#         exit()
+        rcv.join()
+        send.join()
