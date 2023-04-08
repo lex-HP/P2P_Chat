@@ -2,8 +2,9 @@ from socket import *
 import threading
 import datetime
 
-def startChat():
+def startChat(ip):
     global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, User2Socket, rcv, send
+    User2_IP_addr = ip
     Port = 2910
     User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
     print("Your IP address is: ", User1_IP_addr)
