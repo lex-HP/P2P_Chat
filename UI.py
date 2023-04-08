@@ -49,14 +49,14 @@ class ChatGUI:
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
             #sending(message)
-            Thread(target=sending(args=(self.send_message_input.get(), ))).start()
+            Thread(target=sending, args=(message, )).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
             #sending(message)
-            Thread(target=sending(args=(self.send_message_input.get(), ))).start()
+            Thread(target=sending, args=(message, )).start()
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
 
     def update_chat_log(self, message):

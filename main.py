@@ -4,6 +4,7 @@ import datetime
 import time
 
 
+flagSetUser2 = 0
 
 def startChat(ip):
     global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, rcv, send
@@ -36,10 +37,15 @@ def receiving():
 # Start receiving messages
     while True:
         try:
+            
+            print("message = connectionSocket.recv(1024)")
             message = connectionSocket.recv(1024)
+            print("received = message.decode()")
             received = message.decode()
+            print(" time_received, username_received ,content_received = received.")
             time_received, username_received ,content_received = received.split("#<>}")
-                
+            
+
             if content_received == "Goodbye":
                 print("Closing connection socket.")
                 connectionSocket.close()
@@ -55,9 +61,13 @@ def receiving():
 def sending(message):
     # Send message
     #if User2Socket is None:
+    flag = flagSetUser2
     print("message to be sent", message)
-    User2Socket = socket(AF_INET, SOCK_STREAM)
-    User2Socket.connect((User2_IP_addr, Port))
+    if flagSetUser2 == 0:
+        print("creating user2 socket")
+        User2Socket = socket(AF_INET, SOCK_STREAM)
+        User2Socket.connect((User2_IP_addr, Port))
+        flag = 1
     oldMessage = ""
     while True:
 
