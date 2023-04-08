@@ -59,14 +59,16 @@ def sending(message):
     User2Socket = socket(AF_INET, SOCK_STREAM)
     User2Socket.connect((User2_IP_addr, Port))
     while True:
-        #message = input("> ")
-        if message != "<><><><><><><><>5<>":
-            User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
-            if (message == "Goodbye"):
-                User2Socket.close()
-                print("Connection Closed")
-                exit()
-    
+        if message != oldMessage:
+            oldMessage = message
+            #message = input("> ")
+            if message != "<><><><><><><><>5<>":
+                User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
+                if (message == "Goodbye"):
+                    User2Socket.close()
+                    print("Connection Closed")
+                    exit()
+        
 
 
 if __name__ == "__main__":
