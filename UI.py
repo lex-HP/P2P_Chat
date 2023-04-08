@@ -1,7 +1,7 @@
 from tkinter import *
 from socket import *
 from threading import Thread
-from main import startChat
+from main import startChat, sending
 
 class ChatGUI:
     def __init__(self):
@@ -11,7 +11,8 @@ class ChatGUI:
 
     def bSubmit(self):
         ip_addr = str(self.user2_ip_input.get())
-        Thread(target=startChat, args=(ip_addr)).start()
+        startChat(ip_addr)
+        #Thread(target=startChat, args=(ip_addr)).start()
     
     def create_widgets(self):
         # Create labels
@@ -47,12 +48,14 @@ class ChatGUI:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
+            sending(message)
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
+            sending(message)
             print(message)
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
 

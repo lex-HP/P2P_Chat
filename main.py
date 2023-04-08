@@ -10,11 +10,12 @@ def startChat(ip):
     print("Your IP address is: ", User1_IP_addr)
     User2Socket = socket(AF_INET, SOCK_STREAM)
     User1Socket = socket(AF_INET, SOCK_STREAM)
+    User2Socket.connect((User2_IP_addr, Port))
     username = "Alex"
     #User2_IP_addr = input("Enter IP address of User2: ")
     #User2_IP_addr = "192.168.8.239"
     rcv = threading.Thread(target=receiving, name="rcv")
-    send = threading.Thread(target=sending, name="send")
+    #send = threading.Thread(target=sending, name="send")
     rcv.start()
     send.start()
 
@@ -48,11 +49,10 @@ def receiving():
             exit()
 
 
-def sending():
-    User2Socket.connect((User2_IP_addr, Port))
+def sending(message):
     # Send message
     while True:
-        message = input("> ")
+        #message = input("> ")
         User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
         if (message == "Goodbye"):
             User2Socket.close()
