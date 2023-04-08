@@ -58,7 +58,9 @@ def sending(message):
     print("message to be sent", message)
     User2Socket = socket(AF_INET, SOCK_STREAM)
     User2Socket.connect((User2_IP_addr, Port))
+    oldMessage = ""
     while True:
+
         if message != oldMessage:
             oldMessage = message
             #message = input("> ")
@@ -68,6 +70,8 @@ def sending(message):
                     User2Socket.close()
                     print("Connection Closed")
                     exit()
+        else:
+            time.sleep(0.3)
         
 
 

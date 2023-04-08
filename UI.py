@@ -11,7 +11,7 @@ class ChatGUI:
 
     def bSubmit(self):
         ip_addr = str(self.user2_ip_input.get())
-        startChat(ip_addr)
+        Thread(target=startChat, args=(ip_addr,)).start()
         #Thread(target=startChat, args=(ip_addr)).start()
     
     def create_widgets(self):
@@ -48,15 +48,15 @@ class ChatGUI:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
-            sending(message)
-            #Thread(target=self.chat.sending(self.send_message_input.get())).start()
+            #sending(message)
+            Thread(target=sending(args=(self.send_message_input.get(), ))).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
-            sending(message)
-            
+            #sending(message)
+            Thread(target=sending(args=(self.send_message_input.get(), ))).start()
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
 
     def update_chat_log(self, message):
