@@ -1,70 +1,78 @@
-from tkinter import *
 from socket import *
-from threading import Thread
-from main import Chat
+import threading
+import datetime
 
-class ChatGUI:
+class Chat:
     def __init__(self):
-        self.chat = Chat()
-        self.window = Tk()
-        self.window.title("Chat Program")
-        self.create_widgets()
+        self.Port = 2909
+        self.User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
+        print("Your IP address is: ", self.User1_IP_addr)
+        self.User2Socket = socket(AF_INET, SOCK_STREAM)
+        self.User1Socket = socket(AF_INET, SOCK_STREAM)
+        self.username = "Alex"
+        self.GlobalFlag = False
 
-    def bSubmit(self):
-        ip_addr = str(self.user2_ip_input.get())
-        Thread(target=self.chat.start_chat, args=(ip_addr,)).start()
-    
-    def create_widgets(self):
-        # Create labels
-        Label(self.window, text="Enter IP address of User2:").grid(row=0, column=0, sticky=W)
-        Label(self.window, text="Your IP address is: " + gethostbyname_ex(gethostname())[2][-1]).grid(row=1, column=0, sticky=W)
-        Label(self.window, text="Chat Log:").grid(row=2, column=0, sticky=W)
+    def receiving(self):
+        self.User1Socket.bind((self.User1_IP_addr, self.Port))
+        self.User1Socket.listen(1)
 
-        # Create input fields
-        self.user2_ip_input = Entry(self.window, width=20)
-        self.user2_ip_input.grid(row=0, column=1, padx=5, pady=5)
+        print("Waiting for connection...")
+        connectionSocket, addr = self.User1Socket.accept()
+        print("Connected to", addr, "\n>")
 
-        # Create chat log 
-        self.chat_log = Text(self.window, width=50, height=10, state=DISABLED)
-        self.chat_log.grid(row=3, column=0, columnspan=2, padx=5, pady=5)
+        # Start receiving messages
+        while not self.GlobalFlag:
+            try:
+                message = connectionSocket.recv(1024)
+                received = message.decode()
+                time_received, username_received ,content_received = received.split("#<>}")
 
-        ip_addr = self.user2_ip_input.get()
-        self.ip_submit = Button(self.window,text="Submit IP", command=self.bSubmit)
-        self.ip_submit.grid(row=1, column=1)
+                if content_received == "Goodbye":
+                    print("Closing connection socket.")
+                    self.GlobalFlag = True
+                    connectionSocket.close()
+                    raise OSError("Goodbye")
+                    return
+                elif message:
+                    print("[" + time_received + "] " + username_received + " > " + content_received + "\n>")
+            except error:
+                print("User has left")
+                connectionSocket.close()
+                self.GlobalFlag = True
+                return
 
-        # Create send message field and button
-        self.send_message_input = Entry(self.window, width=40)
-        self.send_message_input.grid(row=4, column=0, padx=5, pady=5)
-        self.send_message_button = Button(self.window, text="Send", command=self.send_message)
-        self.send_message_button.grid(row=4, column=1, padx=5, pady=5)
+    def sending(self):
+        self.User2Socket.connect((self.User2_IP_addr, self.Port))
+        # Send message
+        try: 
+            while not self.GlobalFlag:
+                message = input("> ")
+                self.User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + self.username + "#<>}" + message).encode())
+                if (message == "Goodbye"):
+                    self.User2Socket.close()
+                    self.GlobalFlag = True
+                    print("Connection Closed")
+                    raise OSError("Goodbye")
+                    return
+        except:
+            print("User has left.")
+            return
+                
 
-    def start(self):
-        self.window.mainloop()
+    def start_chat(self):
+        self.User2_IP_addr = input("Enter IP address of User2: ")
+        rcv = threading.Thread(target=self.receiving, name="rcv")
+        send = threading.Thread(target=self.sending, name="send")
+        rcv.start()
+        send.start()
 
-    def send_message(self):
-        message = self.send_message_input.get()
-        self.send_message_input.delete(0, END)
-        if message == "Goodbye":
-            self.chat_log.config(state=NORMAL)
-            self.chat_log.insert(END, "You: " + message + "\n")
-            self.chat_log.config(state=DISABLED)
-            #Thread(target=self.chat.sending(self.send_message_input.get())).start()
-            self.window.quit()
-        else:
-            self.chat_log.config(state=NORMAL)
-            self.chat_log.insert(END, "You: " + message + "\n")
-            self.chat_log.config(state=DISABLED)
-            print(message)
-            #Thread(target=self.chat.sending(self.send_message_input.get())).start()
-
-    def update_chat_log(self, message):
-        self.chat_log.config(state=NORMAL)
-        self.chat_log.insert(END, message + "\n")
-        self.chat_log.config(state=DISABLED)
-
-    
-
-gui = ChatGUI()
-#Thread(target=gui.chat.start_chat).start()
-
-gui.start()
+        rcv.join()
+        send.join()
+        
+if __name__ == "__main__":
+    try:
+        chat = Chat()
+        chat.start_chat()
+    except:
+        print("ok goodbye")
+        exit()
