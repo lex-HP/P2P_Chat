@@ -56,7 +56,7 @@ class ChatGUI:
             self.chat_log.insert(END, "You: " + message + "\n")
             self.chat_log.config(state=DISABLED)
             sending(message)
-            print(message)
+            
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
 
     def update_chat_log(self, message):
