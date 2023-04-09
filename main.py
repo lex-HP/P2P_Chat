@@ -3,12 +3,12 @@ import threading
 import datetime
 import time
 
-
 message = "<><><><><><><><>5<>"
-oldMessage = ""
+flagSetUser2 = 0
+
 
 def startChat(ip):
-    global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, rcv, send
+    global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, rcv, send, User2Socket
     User2_IP_addr = ip
     Port = 2910
     User1_IP_addr = gethostbyname_ex(gethostname())[2][-1]
@@ -61,26 +61,13 @@ def receiving():
 
 def sending(message):
     # Send message
-    #if User2Socket is None:
-    print("message to be sent", message)
-    oldMessage = ""
     while True:
-        if message != oldMessage:
-            oldMessage = message
-            #message = input("> ")
-            if message != "<><><><><><><><>5<>":
-                User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
-                if (message == "Goodbye"):
-                    User2Socket.close()
-                    print("Connection Closed")
-                    exit()
-            elif message == "<><><><><><><><>5<>":
-                print("creating user2 socket")
-                User2Socket = socket(AF_INET, SOCK_STREAM)
-                User2Socket.connect((User2_IP_addr, Port))
-        else:
-            time.sleep(0.3)
-        
+        #message = input("> ")
+        User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
+        if (message == "Goodbye"):
+            User2Socket.close()
+            print("Connection Closed")
+            exit()
 
 
 if __name__ == "__main__":
