@@ -3,8 +3,9 @@ import threading
 import datetime
 import time
 
-message = "<><><><><><><><>"
-flagSetUser2 = 0
+
+message = "<><><><><><><><>5<>"
+oldMessage = ""
 
 def startChat(ip):
     global Port, User1_IP_addr, User1Socket, User2_IP_addr, username, rcv, send
@@ -61,8 +62,8 @@ def receiving():
 def sending(message):
     # Send message
     #if User2Socket is None:
-    flag = flagSetUser2
     print("message to be sent", message)
+    oldMessage = ""
     while True:
         if message != oldMessage:
             oldMessage = message
@@ -75,7 +76,6 @@ def sending(message):
                     exit()
             elif message == "<><><><><><><><>5<>":
                 print("creating user2 socket")
-                global User2Socket
                 User2Socket = socket(AF_INET, SOCK_STREAM)
                 User2Socket.connect((User2_IP_addr, Port))
         else:

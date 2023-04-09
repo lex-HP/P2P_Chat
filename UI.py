@@ -1,7 +1,8 @@
 from tkinter import *
 from socket import *
 from threading import Thread
-from main import startChat, sending
+from main import startChat, sending, message
+import main
 
 class ChatGUI:
     def __init__(self):
@@ -42,21 +43,22 @@ class ChatGUI:
         self.window.mainloop()
 
     def send_message(self):
-        message = self.send_message_input.get()
+        messageBox = self.send_message_input.get()
         self.send_message_input.delete(0, END)
-        if message == "Goodbye":
+        if messageBox == "Goodbye":
             self.chat_log.config(state=NORMAL)
-            self.chat_log.insert(END, "You: " + message + "\n")
+            self.chat_log.insert(END, "You: " + messageBox + "\n")
             self.chat_log.config(state=DISABLED)
-            #sending(message)
-            Thread(target=sending, args=(message, )).start()
+            main.message = messageBox
+            #Thread(target=sending, args=(message, )).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
-            self.chat_log.insert(END, "You: " + message + "\n")
+            self.chat_log.insert(END, "You: " + messageBox + "\n")
             self.chat_log.config(state=DISABLED)
+            main.message = messageBox
             #sending(message)
-            Thread(target=sending, args=(message, )).start()
+            #Thread(target=sending, args=(messageBox, )).start()
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
 
     def update_chat_log(self, message):
