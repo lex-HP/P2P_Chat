@@ -3,6 +3,12 @@ from socket import *
 from threading import Thread
 from main import startChat, sending, message
 import main
+from socket import *
+import threading
+import datetime
+import time
+
+Port = 2910
 
 class ChatGUI:
     def __init__(self):
@@ -11,7 +17,7 @@ class ChatGUI:
         self.create_widgets()
 
     def bSubmit(self):
-        ip_addr = str(self.user2_ip_input.get())
+        self.ip_addr = str(self.user2_ip_input.get())
         Thread(target=startChat, args=(ip_addr,)).start()
         #Thread(target=startChat, args=(ip_addr)).start()
     
@@ -50,7 +56,7 @@ class ChatGUI:
             self.chat_log.insert(END, "You: " + messageBox + "\n")
             self.chat_log.config(state=DISABLED)
             main.message = messageBox
-            #Thread(target=sending, args=(message, )).start()
+            Thread(target=sending, args=(message, )).start()
             self.window.quit()
         else:
             self.chat_log.config(state=NORMAL)
@@ -58,8 +64,22 @@ class ChatGUI:
             self.chat_log.config(state=DISABLED)
             main.message = messageBox
             #sending(message)
-            #Thread(target=sending, args=(messageBox, )).start()
+            Thread(target=sending, args=(messageBox, )).start()
             #Thread(target=self.chat.sending(self.send_message_input.get())).start()
+
+    def sending(self, message):
+        # Send message
+        User2Socket = socket(AF_INET, SOCK_STREAM)
+        User2Socket.connect((self.ip_addr, Port))
+        
+        while True:
+            #message = input("> ")
+            User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
+            if (message == "Goodbye"):
+                User2Socket.close()
+                print("Connection Closed")
+                exit()
+
 
     def update_chat_log(self, message):
         self.chat_log.config(state=NORMAL)

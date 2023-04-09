@@ -61,6 +61,9 @@ def receiving():
 
 def sending(message):
     # Send message
+    User2Socket = socket(AF_INET, SOCK_STREAM)
+    User2Socket.connect((User2_IP_addr, Port))
+       
     while True:
         #message = input("> ")
         User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
@@ -73,3 +76,30 @@ def sending(message):
 if __name__ == "__main__":
     ip_addr = input("Enter IP address of User2: ")
     startChat(ip_addr)
+
+
+"""
+def sending(message):
+    # Send message
+    #if User2Socket is None:
+    global oldMessage
+    oldMessage = ""
+    while True:
+        if message != oldMessage:
+            oldMessage = message
+            #message = input("> ")
+            if message != "<><><><><><><><>5<>":
+                print("message to be sent", message)
+                User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + username + "#<>}" + message).encode())
+                if (message == "Goodbye"):
+                    User2Socket.close()
+                    print("Connection Closed")
+                    exit()
+            elif message == "<><><><><><><><>5<>":
+                print("creating user2 socket")
+                User2Socket = socket(AF_INET, SOCK_STREAM)
+                User2Socket.connect((User2_IP_addr, Port))
+        else:
+            time.sleep(0.3)
+        
+"""
