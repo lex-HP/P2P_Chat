@@ -1,6 +1,7 @@
 from socket import *
 import threading
 import datetime
+from record import save_message
 
 class Chat:
     def __init__(self):
@@ -60,6 +61,7 @@ class Chat:
             while not self.GlobalFlag:
                 #message = input("> ")
                 self.User2Socket.send(str(datetime.datetime.now().strftime("%H:%M:%S") + "#<>}" + self.username + "#<>}" + message).encode())
+                save_message(message)
                 if (message == "Goodbye"):
                     self.User2Socket.close()
                     self.GlobalFlag = True
