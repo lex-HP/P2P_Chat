@@ -16,6 +16,18 @@ class ChatGUI:
     def bExport(self):
         self.df.to_csv('chatlog.csv', encoding='utf-8', index=False)
 
+    def send_message_to_user(self, user2_ip, user2_port):
+        with socket(AF_INET, SOCK_STREAM) as sock:
+            sock.connect((user2_ip, user2_port))
+            message = self.send_message_input.get()
+            sock.sendall(message.encode())
+
+
+    def start_sender_thread(self):
+        user2_ip = self.user2_ip_input.get()
+        user2_port = 5000
+        sender_thread = Thread(target=self.send_message_to_user, args=(user2_ip, user2_port))
+        sender_thread.start()
 
 
     def create_widgets(self):
@@ -53,13 +65,8 @@ class ChatGUI:
         self.update_chat_log(message, "You")
         self.send_message_input.delete(0, END)
 
+        self.start_sender_thread()
 
-        # Send message to User2
-        user2_ip = self.user2_ip_input.get()
-        user2_port = 5000
-        with socket(AF_INET, SOCK_STREAM) as sock:
-            sock.connect((user2_ip, user2_port))
-            sock.sendall(message.encode())
         
         
 
@@ -82,13 +89,16 @@ def listen_for_messages(ip, port, chat_gui):
         sock.bind((ip, port))
         sock.listen()
         while True:
-            conn, addr = sock.accept()
-            with conn:
-                data = conn.recv(1024)
-                if not data:
-                    break
-                message = data.decode()
-                chat_gui.update_chat_log(message, "Server")
+            try:
+                conn, addr = sock.accept()
+                with conn:
+                    data = conn.recv(1024)
+                    if not data:
+                        break
+                    message = data.decode()
+                    chat_gui.update_chat_log(message, "Server")
+            except OSError:
+                break
 
 if __name__ == '__main__':
     chat_gui = ChatGUI()
