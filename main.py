@@ -65,18 +65,7 @@ class ChatGUI:
         self.update_chat_log(message, "You")
         self.send_message_input.delete(0, END)
 
-        # Send message to User2
-        user2_ip = self.user2_ip_input.get()
-        user2_port = 5000
-        with socket(AF_INET, SOCK_STREAM) as sock:
-            sock.connect((user2_ip, user2_port))
-            sock.sendall(message.encode())
-            # Wait for acknowledgement from the other end
-            ack = sock.recv(1024).decode()
-            if ack == "OK":
-                print("Message sent successfully")
-            else:
-                print("Message delivery failed")
+        self.start_sender_thread()
 
         
         
@@ -100,16 +89,19 @@ def listen_for_messages(ip, port, chat_gui):
         sock.bind((ip, port))
         sock.listen()
         while True:
-            try:
-                conn, addr = sock.accept()
-                with conn:
+            conn, addr = sock.accept()
+            with conn:
+                while True:
                     data = conn.recv(1024)
                     if not data:
                         break
                     message = data.decode()
-                    chat_gui.update_chat_log(message, "Server")
-            except OSError:
-                break
+                    chat_gui.update_chat_log(message, "User2")
+                    # Send message to User2
+                    with socket(AF_INET, SOCK_STREAM) as sock2:
+                        sock2.connect((chat_gui.user1_ip, chat_gui.user1_port))
+                        sock2.sendall(message.encode())
+
 
 if __name__ == '__main__':
     chat_gui = ChatGUI()
