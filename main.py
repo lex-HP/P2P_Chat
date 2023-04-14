@@ -65,7 +65,18 @@ class ChatGUI:
         self.update_chat_log(message, "You")
         self.send_message_input.delete(0, END)
 
-        self.start_sender_thread()
+        # Send message to User2
+        user2_ip = self.user2_ip_input.get()
+        user2_port = 5000
+        with socket(AF_INET, SOCK_STREAM) as sock:
+            sock.connect((user2_ip, user2_port))
+            sock.sendall(message.encode())
+            # Wait for acknowledgement from the other end
+            ack = sock.recv(1024).decode()
+            if ack == "OK":
+                print("Message sent successfully")
+            else:
+                print("Message delivery failed")
 
         
         
