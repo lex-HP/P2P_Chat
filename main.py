@@ -16,18 +16,6 @@ class ChatGUI:
     def bExport(self):
         self.df.to_csv('chatlog.csv', encoding='utf-8', index=False)
 
-    def send_message_to_user(self, user2_ip, user2_port):
-        with socket(AF_INET, SOCK_STREAM) as sock:
-            sock.connect((user2_ip, user2_port))
-            message = self.send_message_input.get()
-            sock.sendall(message.encode())
-
-
-    def start_sender_thread(self):
-        user2_ip = self.user2_ip_input.get()
-        user2_port = 5000
-        sender_thread = Thread(target=self.send_message_to_user, args=(user2_ip, user2_port))
-        sender_thread.start()
 
 
     def create_widgets(self):
@@ -65,8 +53,13 @@ class ChatGUI:
         self.update_chat_log(message, "You")
         self.send_message_input.delete(0, END)
 
-        self.start_sender_thread()
 
+        # Send message to User2
+        user2_ip = self.user2_ip_input.get()
+        user2_port = 5000
+        with socket(AF_INET, SOCK_STREAM) as sock:
+            sock.connect((user2_ip, user2_port))
+            sock.sendall(message.encode())
         
         
 
@@ -84,7 +77,7 @@ class ChatGUI:
             # append new row with message content and timestamp
             self.df = self.df._append({'Username': user, 'Timestamp': timestamp, 'Message': message}, ignore_index=True)         
 
-def listen_for_messages(ip, port, chat_gui, user2_ip):
+def listen_for_messages(ip, port, chat_gui):
     with socket(AF_INET, SOCK_STREAM) as sock:
         sock.bind((ip, port))
         sock.listen()
@@ -96,12 +89,6 @@ def listen_for_messages(ip, port, chat_gui, user2_ip):
                     break
                 message = data.decode()
                 chat_gui.update_chat_log(message, "Server")
-                # Send message to other user
-                with socket(AF_INET, SOCK_STREAM) as sock2:
-                    sock2.connect((user2_ip, port))
-                    sock2.sendall(message.encode())
-
-
 
 if __name__ == '__main__':
     chat_gui = ChatGUI()
