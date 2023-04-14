@@ -84,23 +84,23 @@ class ChatGUI:
             # append new row with message content and timestamp
             self.df = self.df._append({'Username': user, 'Timestamp': timestamp, 'Message': message}, ignore_index=True)         
 
-def listen_for_messages(ip, port, chat_gui):
+def listen_for_messages(ip, port, chat_gui, user2_ip):
     with socket(AF_INET, SOCK_STREAM) as sock:
         sock.bind((ip, port))
         sock.listen()
         while True:
             conn, addr = sock.accept()
             with conn:
-                while True:
-                    data = conn.recv(1024)
-                    if not data:
-                        break
-                    message = data.decode()
-                    chat_gui.update_chat_log(message, "User2")
-                    # Send message to User2
-                    with socket(AF_INET, SOCK_STREAM) as sock2:
-                        sock2.connect((chat_gui.user1_ip, chat_gui.user1_port))
-                        sock2.sendall(message.encode())
+                data = conn.recv(1024)
+                if not data:
+                    break
+                message = data.decode()
+                chat_gui.update_chat_log(message, "Server")
+                # Send message to other user
+                with socket(AF_INET, SOCK_STREAM) as sock2:
+                    sock2.connect((user2_ip, port))
+                    sock2.sendall(message.encode())
+
 
 
 if __name__ == '__main__':
